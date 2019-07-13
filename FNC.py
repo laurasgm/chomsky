@@ -58,42 +58,64 @@ def large(rules,let,voc):
 
     return rules,let,voc
 
+def replaceTerminalNode(rules, new_rules, noTerminal, terminal):
+    new_rules[noTerminal] = terminal
+    for key in rules:
+        values = rules[key]
+        for i in range(len(values)):
+            rules[key][i] = values[i].replace(terminal, noTerminal)
+    #print new_rules
+    return rules, new_rules
 
-
+def merge_two_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
 
 def short(rules,let,voc):
     #piscina de minusculas con la que comparemos ese simbolo no terminal
     minusculas=list(letters[:26])
+    new_rules = {}
     new_dict = copy.deepcopy(rules)
     for key in new_dict:
         values = new_dict[key] #values nos contendra los valores de las reglas o new_dict 
-        print values
+        
         
         for i in range(len(values)):#i en el rango del numero de los values
             
-            for j in values[i]:#j va dentro del rango de cada una de las cadenas que contiene values 
-                #print(j)
-
-                for k in j:# ka va a recorrer la cadena
+            #for j in values[i]:#j va dentro del rango de cada una de las cadenas que contiene values 
+                #print values[i]
+            if len(values[i]) > 1:
+                #print("hola")
+                for k in values[i]:# ka va a recorrer la cadena 
                     if k in minusculas:# Si un caracter de la cadena es una minuscula, por ende es un simbolo no terminal
                     #print let[0]
                     #c[u] = let[0]
                         #print values[i]+" antes"
-                        values[i] = values[i].replace(k, let[0])#en la posicion i de los values reemplazamos esa k por l[0]
+                        #values[i] = values[i].replace(k, let[0])#en la posicion i de los values reemplazamos esa k por l[0]
                         #print values[i]+" despues"
+                        #w={k}#las minusculas repetidas
+                        #x= set(let[0])#las claves a esas minusculas
+                        
+                        #for k in w:
+                            #new = x.pop()
+                            #values[i] = values[i].replace(k,new)
+                            
                         n=k#guarmanos a k en n para no perderla
-                        minusculas.remove(k)#removemos a k de las minisculas
+                        #minusculas.remove(k)#removemos a k de las minisculas
                         #print k
-                        voc.append(let[0])
-                        new_key = copy.deepcopy(let[0])#copiamos el nuevo simbolo terminal en new_key
-                        rules.setdefault(new_key, []).append(n)#creamos la nueva regla que nos contendra el simbolo no terminal
-                                
+#                            voc.append(let[0])
+                        new_key = let.pop(0)#copiamos el nuevo simbolo no terminal en new_key
+                        
+                        rules, new_rules = replaceTerminalNode(rules, new_rules, new_key, k)
+                        new_dict = copy.deepcopy(rules)
+                        #rules.setdefault(new_key, []).append(n)#creamos la nueva regla que nos contendra el simbolo terminal           
                 
                         
-            rules[key][i] = values[i]
-            let.remove(let[0])
-    
-    return rules,let,voc
+#            rules[key][i] = values[i]
+ #           let.remove(let[0])
+    z = merge_two_dicts(rules, new_rules)
+    return z,let,voc
 
 
 # Print rules
